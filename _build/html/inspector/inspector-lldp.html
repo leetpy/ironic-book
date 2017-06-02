@@ -1,0 +1,337 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>2.1 inspector 兼容 SDN lldp 报文 &mdash; ironic notes</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="ironic notes" href="../index.html"/>
+        <link rel="next" title="2.3 inspector 源码分析" href="inspector-source.html"/>
+        <link rel="prev" title="2.0 inspector介绍" href="inspector.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> ironic notes
+          
+
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../ironic/preface.html">前言</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../ironic/preface.html#id2">内容</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ironic/preface.html#id3">术语</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ironic/preface.html#id4">学习资料</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ironic/preface.html#id5">作者</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../ironic/introduction.html">1.0 ironic 简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ironic/tftp.html">1.2 tftp 配置</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../ironic/tftp.html#id1">安装</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ironic/tftp.html#id2">防火墙</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="inspector.html">2.0 inspector介绍</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="inspector.html#id1">inspector 安装</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="inspector.html#id2">创建数据库</a></li>
+<li class="toctree-l3"><a class="reference internal" href="inspector.html#keystone">keystone 注册</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="inspector.html#id3">inspector 配置</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="inspector.html#dnsmasq">dnsmasq 配置</a></li>
+<li class="toctree-l3"><a class="reference internal" href="inspector.html#tftp">tftp 配置</a></li>
+<li class="toctree-l3"><a class="reference internal" href="inspector.html#ironic">ironic 配置</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="inspector.html#id4">组网说明</a></li>
+<li class="toctree-l2"><a class="reference internal" href="inspector.html#id5">说明</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">2.1 inspector 兼容 SDN lldp 报文</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#lldp">lldp 介绍</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="inspector-source.html">2.3 inspector 源码分析</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="inspector-source.html#ironic">ironic 处理阶段</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../ipa/ipa.html">3.0 IPA 介绍</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ironic/images.html">4.0 ironic 映像</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../ironic/images.html#deploy">deploy 映像</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../ironic/images.html#coreos">coreos 映像</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ironic/images.html#dib">dib 映像</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../ironic/images.html#user">user 映像</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../ironic/vbmc.html">5.2 virtualbmc使用</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../ironic/vbmc.html#id1">virtualbmc 安装</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ironic/vbmc.html#id2">virtualbmc 使用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ironic/vbmc.html#id3">常用命令</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ironic/vbmc.html#id4">说明</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">ironic notes</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li>2.1 inspector 兼容 SDN lldp 报文</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="inspector-sdn-lldp">
+<h1>2.1 inspector 兼容 SDN lldp 报文<a class="headerlink" href="#inspector-sdn-lldp" title="Permalink to this headline">¶</a></h1>
+<p>部分 SDN 交换机使用的 lldp 报文跟正常的 lldp 报文有些差异。要兼容这部分交换机，我们需要修改 inspector 的实现代码。</p>
+<div class="section" id="lldp">
+<h2>lldp 介绍<a class="headerlink" href="#lldp" title="Permalink to this headline">¶</a></h2>
+<p>这里先简单介绍一下 lldp 报文结构， lldp 采用 TLV(type length value)方式存储数据。报文结构如下图所示：</p>
+<img alt="http://img.blog.csdn.net/20130902202844578?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvZ29vZGx1Y2t3aGg=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" src="http://img.blog.csdn.net/20130902202844578?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvZ29vZGx1Y2t3aGg=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" />
+<p>TLV 的类型域的定义及分配如下图所示：</p>
+<img alt="http://img.blog.csdn.net/20130902202901875?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvZ29vZGx1Y2t3aGg=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" src="http://img.blog.csdn.net/20130902202901875?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvZ29vZGx1Y2t3aGg=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" />
+<p>我们在 ironic 中使用的 local_link_connection 和报文的对应关系如下表：</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="23%" />
+<col width="59%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">TLV TYPE</th>
+<th class="head">TLV NAME</th>
+<th class="head">local link connection name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>1</td>
+<td>chassis ID</td>
+<td>switch_id</td>
+</tr>
+<tr class="row-odd"><td>2</td>
+<td>port_id</td>
+<td>port_id</td>
+</tr>
+</tbody>
+</table>
+<p>再来介绍下 SDN 的 lldp 报文和普通的 lldp 报文有啥差异，首先不管是 SDN 的 lldp 还是普通交换的 lldp， 我们要收集的都是 chassis ID 和 port id，那有什么差异呢？这是因为 chassis ID 和 port id，还存在 subtype， 通过 subtype 可以定义不同的 chassis ID 和 port id 值。</p>
+<p>先看看 chassis ID 报文结构：</p>
+<img alt="http://img.blog.csdn.net/20130902203045343?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvZ29vZGx1Y2t3aGg=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" src="http://img.blog.csdn.net/20130902203045343?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvZ29vZGx1Y2t3aGg=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" />
+<p>chassis子类型所可能的取值如图所示：</p>
+<img alt="http://img.blog.csdn.net/20130902203059937?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvZ29vZGx1Y2t3aGg=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" src="http://img.blog.csdn.net/20130902203059937?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvZ29vZGx1Y2t3aGg=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" />
+<p>再看看  port id 值</p>
+<img alt="http://img.blog.csdn.net/20130902203117000?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvZ29vZGx1Y2t3aGg=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" src="http://img.blog.csdn.net/20130902203117000?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvZ29vZGx1Y2t3aGg=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" />
+<p>其子类型的可能取值如下图所示：</p>
+<img alt="http://img.blog.csdn.net/20130902203136812?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvZ29vZGx1Y2t3aGg=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" src="http://img.blog.csdn.net/20130902203136812?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvZ29vZGx1Y2t3aGg=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" />
+<p>SDN 的 lldp 和普通 lldp 报文差异如下表所示：</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="13%" />
+<col width="17%" />
+<col width="21%" />
+<col width="15%" />
+<col width="34%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">SWITCH</th>
+<th class="head">TLV TYPE</th>
+<th class="head">TLV NAME</th>
+<th class="head">subtype</th>
+<th class="head">subtype value</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>SDN</td>
+<td>1</td>
+<td>chassis id</td>
+<td>7</td>
+<td rowspan="6">Locally assigned</td>
+</tr>
+<tr class="row-odd"><td>normal</td>
+<td>1</td>
+<td>chassis id</td>
+<td>4</td>
+</tr>
+<tr class="row-even"><td>SDN</td>
+<td>2</td>
+<td>port id</td>
+<td>7</td>
+</tr>
+<tr class="row-odd"><td>normal</td>
+<td>2</td>
+<td>port id</td>
+<td>3</td>
+</tr>
+<tr class="row-even"><td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>5</td>
+</tr>
+<tr class="row-odd"><td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>7</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="inspector-source.html" class="btn btn-neutral float-right" title="2.3 inspector 源码分析" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="inspector.html" class="btn btn-neutral" title="2.0 inspector介绍" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, liekkas.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,371 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>2.0 inspector介绍 &mdash; ironic notes</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="ironic notes" href="../index.html"/>
+        <link rel="next" title="2.1 inspector 兼容 SDN lldp 报文" href="inspector-lldp.html"/>
+        <link rel="prev" title="1.2 tftp 配置" href="../ironic/tftp.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> ironic notes
+          
+
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../ironic/preface.html">前言</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../ironic/preface.html#id2">内容</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ironic/preface.html#id3">术语</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ironic/preface.html#id4">学习资料</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ironic/preface.html#id5">作者</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../ironic/introduction.html">1.0 ironic 简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ironic/tftp.html">1.2 tftp 配置</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../ironic/tftp.html#id1">安装</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ironic/tftp.html#id2">防火墙</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">2.0 inspector介绍</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">inspector 安装</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">创建数据库</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#keystone">keystone 注册</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">inspector 配置</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#dnsmasq">dnsmasq 配置</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#tftp">tftp 配置</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ironic">ironic 配置</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">组网说明</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">说明</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="inspector-lldp.html">2.1 inspector 兼容 SDN lldp 报文</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="inspector-lldp.html#lldp">lldp 介绍</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="inspector-source.html">2.3 inspector 源码分析</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="inspector-source.html#ironic">ironic 处理阶段</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../ipa/ipa.html">3.0 IPA 介绍</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ironic/images.html">4.0 ironic 映像</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../ironic/images.html#deploy">deploy 映像</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../ironic/images.html#coreos">coreos 映像</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ironic/images.html#dib">dib 映像</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../ironic/images.html#user">user 映像</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../ironic/vbmc.html">5.2 virtualbmc使用</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../ironic/vbmc.html#id1">virtualbmc 安装</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ironic/vbmc.html#id2">virtualbmc 使用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ironic/vbmc.html#id3">常用命令</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ironic/vbmc.html#id4">说明</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">ironic notes</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li>2.0 inspector介绍</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="inspector">
+<h1>2.0 inspector介绍<a class="headerlink" href="#inspector" title="Permalink to this headline">¶</a></h1>
+<p>在我们注册完 ironic-node 之后，我们需要把裸机的硬件信息更新到 node 表里。如果数量比较少，我们可以手动添加，但是如果是大规模部署，显然不适合手动添加。另外还有 port 的创建，裸机网口和交换机的链接关系等，都不适合自动添加。</p>
+<p>ironic inspector 主要是帮助我们收集裸机信息的。</p>
+<div class="section" id="id1">
+<h2>inspector 安装<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>选择一个计算节点，安装 ironic-inspector，inspector 可以和 ironic-conducor 在同一个节点，也可以在不同节点。</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>sudo yum install openstack-ironic-inspector
+</pre></div>
+</div>
+<div class="section" id="id2">
+<h3>创建数据库<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>CREATE DATABASE ironic_inspector CHARACTER SET utf8<span class="p">;</span>
+
+GRANT ALL PRIVILEGES ON ironic_inspector.* TO <span class="s1">&#39;inspector&#39;</span>@<span class="s1">&#39;localhost&#39;</span> <span class="se">\</span>
+IDENTIFIED BY <span class="s1">&#39;inspector&#39;</span><span class="p">;</span>
+
+GRANT ALL PRIVILEGES ON ironic_inspector.* TO <span class="s1">&#39;inspector&#39;</span>@<span class="s1">&#39;%&#39;</span> <span class="se">\</span>
+IDENTIFIED BY <span class="s1">&#39;inspector&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>创建完数据库之后，配置数据库连接，并生成数据库表。</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ cat /etc/ironic-inspector/inspector.conf
+
+<span class="o">[</span>database<span class="o">]</span>
+<span class="nv">connection</span> <span class="o">=</span>  mysql+pymysql://inspector:inspector@10.43.210.22/ironic_inspector?charset<span class="o">=</span>utf8
+</pre></div>
+</div>
+<p>调用 <code class="docutils literal"><span class="pre">ironic-inspector-dbsync</span></code> 生成表</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>ironic-inspector-dbsync --config-file /etc/ironic-inspector/inspector.conf
+</pre></div>
+</div>
+</div>
+<div class="section" id="keystone">
+<h3>keystone 注册<a class="headerlink" href="#keystone" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>openstack user create --password ironic_inspector <span class="se">\</span>
+--email ironic_inspector@example.com ironic_inspector
+
+openstack role add --project service --user ironic_inspector admin
+
+openstack service create --name ironic-inspector --description <span class="se">\</span>
+<span class="s2">&quot;Ironic inspector baremetal provisioning service&quot;</span> baremetal-introspection
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id3">
+<h2>inspector 配置<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>inspector 提供了两个服务 <code class="docutils literal"><span class="pre">openstack-ironic-inspector</span></code>
+和 <code class="docutils literal"><span class="pre">openstack-ironic-inspector-dnsmasq</span></code></p>
+<div class="section" id="dnsmasq">
+<h3>dnsmasq 配置<a class="headerlink" href="#dnsmasq" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ cat /etc/ironic-inspector/dnsmasq.conf
+
+<span class="nv">port</span><span class="o">=</span><span class="m">0</span>
+<span class="nv">interface</span><span class="o">=</span>eth0
+bind-interfaces
+dhcp-range<span class="o">=</span><span class="m">192</span>.168.2.10,192.168.2.200
+enable-tftp
+tftp-root<span class="o">=</span>/tftpboot
+dhcp-boot<span class="o">=</span>pxelinux.0
+dhcp-sequential-ip
+</pre></div>
+</div>
+<p>这里的 interface 是提供 DHCP 服务的网口，也是 tftp 的网口，
+我们需要给 <code class="docutils literal"><span class="pre">eth0</span></code> 配置一个同网段的 IP。</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ cat /etc/sysconfig/network-scripts/ifcfg-eth0
+
+<span class="nv">TYPE</span><span class="o">=</span>Ethernet
+<span class="nv">BOOTPROTO</span><span class="o">=</span>static
+<span class="nv">NAME</span><span class="o">=</span>eth0
+<span class="nv">DEVICE</span><span class="o">=</span>eth0
+<span class="nv">ONBOOT</span><span class="o">=</span>yes
+<span class="nv">IPADDR</span><span class="o">=</span><span class="m">192</span>.168.2.2
+<span class="nv">NETMASK</span><span class="o">=</span><span class="m">255</span>.255.255.0
+</pre></div>
+</div>
+</div>
+<div class="section" id="tftp">
+<h3>tftp 配置<a class="headerlink" href="#tftp" title="Permalink to this headline">¶</a></h3>
+<p>inspector 和 provision 使用的是同一组 deploy 内核镜像
+这里假设 tftp 服务器已经配置好了，我们这里只添加
+default 文件，文件内容如下：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>default introspect
+
+label introspect
+kernel deploy.vmlinuz
+append <span class="nv">initrd</span><span class="o">=</span>deploy.initrd ipa-inspection-callback-url<span class="o">=</span>http://192.168.2.2:5050/v1/continue ipa-inspection-collectors<span class="o">=</span>default ipa-collect-lldp<span class="o">=</span><span class="m">1</span> systemd.journald.forward_to_console<span class="o">=</span>no
+
+ipappend <span class="m">3</span>
+</pre></div>
+</div>
+<p>在 default 文件中，确认如下两个配置：</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">ipa-inspection-callback-url</span></code>，这个 IP 填写 tftp 的 IP 地址，裸机需要访问这个 IP;</li>
+<li><code class="docutils literal"><span class="pre">ipa-collect-lldp=1</span></code> 是让 IPA 收集 lldp 报文。</li>
+</ul>
+</div>
+<div class="section" id="ironic">
+<h3>ironic 配置<a class="headerlink" href="#ironic" title="Permalink to this headline">¶</a></h3>
+<p>要在 ironic 里使用 inspector，需要先在 ironic 配置文件里使能 inspector，
+配置如下：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ cat /etc/ironic/ironic.conf
+
+<span class="o">[</span>inspector<span class="o">]</span>
+<span class="nv">enabled</span> <span class="o">=</span> <span class="nb">true</span>
+<span class="nv">service_url</span> <span class="o">=</span> http://10.43.210.23:5050
+</pre></div>
+</div>
+<p>这里的 <code class="docutils literal"><span class="pre">service_url</span></code> 也可以不写，ironic 会根据注册的
+endpoint 来获取。</p>
+</div>
+</div>
+<div class="section" id="id4">
+<h2>组网说明<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<p>由于 inspector 的 DHCP 服务是不区分 mac 地址的，如果在
+flat 网络中使用，跟 neutron-dhcp-agent 有冲突。因此如果
+是 flat 网络，建议分开进行 inspector 和 provision。 如果是
+vlan 网络，把 inspector 和 provision 放到不同的 vlan 即可。</p>
+</div>
+<div class="section" id="id5">
+<h2>说明<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<p>如果把 ironic-inspector 和 ironic-conductor 放到同一个节点，
+那么 provision流程和 inspector 流程是公用一个 tftp 服务器，
+然后监听不同的网口。在正常情况下是没有冲突的，但是如果部署
+流程失败了，导致 tftp 数据有残留，那么后续可能进行 inspector
+流程时，会下到 deploy 的镜像和配置文件，从而导致 inspector 失败。</p>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="inspector-lldp.html" class="btn btn-neutral float-right" title="2.1 inspector 兼容 SDN lldp 报文" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../ironic/tftp.html" class="btn btn-neutral" title="1.2 tftp 配置" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, liekkas.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

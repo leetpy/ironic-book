@@ -13,6 +13,7 @@ Contents:
 
    ironic/preface.rst
    ironic/introduction.rst
+   ironic/install.rst
    ironic/tftp.rst
    inspector/inspector.rst
    inspector/inspector-lldp.rst

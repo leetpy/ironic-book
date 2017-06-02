@@ -34,16 +34,20 @@
 +-----------+----------------------------------------------+
 
 
-学习资料
---------
+openstack 学习
+--------------
 
-关于 ironic 的学习资料，笔者自己主要是通过阅读社区文档来学习的。
+关于 openstack 的学习，笔者主要从以下几个方面学习：
 
 * 文档: https://docs.openstack.org/developer/ironic/
 * IRC 记录: http://eavesdrop.openstack.org/meetings/ironic
+* code review: https://review.openstack.org/#/q/status:open
+* 查看 bp: https://launchpad.net/
+* 阅读源码
 
 
-作者
-----
+About
+-----
 
-* liekkas
+* author: liekkas
+* email: leetpy2@gmail.com

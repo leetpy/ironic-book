@@ -19,6 +19,7 @@ Contents:
    inspector/inspector-source.rst
    ipa/ipa.rst
    ironic/images.rst
+   ironic/test.rst
    ironic/vbmc.rst
 
 

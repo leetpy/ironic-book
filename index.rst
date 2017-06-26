@@ -22,6 +22,7 @@ Contents:
    ironic/images.rst
    ironic/test.rst
    ironic/vbmc.rst
+   ironic/driver.rst
 
 
 Indices and tables

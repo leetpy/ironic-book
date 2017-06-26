@@ -1,3 +1,4 @@
+===============
 4.0 ironic 映像
 ===============
 
@@ -76,3 +77,23 @@ user 映像
 user 映像又分为 partition 映像和 whole disk 映像，两者的区别是
 whole disk 映像包含分区表和 boot。目前 partition 映像已经很少
 使用了，现在基本都使用 whole disk 映像。
+
+
+镜像驱动问题
+^^^^^^^^^^^^
+
+我们使用虚机制作的镜像安装在物理机上，很可能缺少驱动，而导致用户
+系统起不来。这里我们以 CentOS 为例，说明如何重新制作驱动。
+
+.. code-block:: bash
+
+    mount -o loop CentOS.iso /mnt
+    cd /mnt/isolinux
+    lsinitrd initrd.img | grep "\.ko" | awk -F / '{print $NF}' | tr "\n" " "
+
+    # 将如上命令获得的ko列表拷贝到 /etc/dracut.conf 中 
+    add_drivers+=""
+
+    rm -rf /boot/*kdump.img
+    dracut --force
+

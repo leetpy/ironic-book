@@ -1,3 +1,4 @@
+================
 Inspect 常见问题
 ================
 
@@ -9,138 +10,81 @@ Introspection 开始时出错
   进行Introspection 时，node 的初始状态必须为 ``manageable``,
   如果是 ``available`` 状态，可通过如下命令切换::
 
-    ironic node-set-provision-state <IRONIC NODE> provide
+    ironic node-set-provision-state <IRONIC NODE> manage
 
 Introspection 超时
 ~~~~~~~~~~~~~~~~~~
 
 Introspection 超时有三种可能（默认超时时间是 60min, 可以通过配置项 timeout 来更改）：
 
-#. Fatal failure in processing chain before node was found in the local cache.
-   See `Troubleshooting data processing`_ for the hints.
+#. 处理数据错误.
+   参考 `Troubleshooting data processing`_.
 
-#. Failure to load the ramdisk on the target node. See `Troubleshooting
-   PXE boot`_ for the hints.
+#. 下载镜像错误。参考 `Troubleshooting PXE boot`_ .
 
-#. Failure during ramdisk run. See `Troubleshooting ramdisk run`_ for the
-   hints.
+#. 运行错误. 参考 `Troubleshooting ramdisk run`_.
 
 Troubleshooting data processing
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-In this case **ironic-inspector** logs should give a good idea what went wrong.
-E.g. for RDO or Fedora the following command will output the full log::
+主要检查 **ironic-inspector** 的日志::
 
     sudo journalctl -u openstack-ironic-inspector
 
 (use ``openstack-ironic-discoverd`` for version < 2.0.0).
 
-.. note::
-    Service name and specific command might be different for other Linux
-    distributions (and for old version of **ironic-inspector**).
 
-If ``ramdisk_error`` plugin is enabled and ``ramdisk_logs_dir`` configuration
-option is set, **ironic-inspector** will store logs received from the ramdisk
-to the ``ramdisk_logs_dir`` directory. This depends, however, on the ramdisk
+如果配置了 ``ramdisk_error`` 和 ``ramdisk_logs_dir``,
+**ironic-inspector** 会接收裸机的日志，并保存到 ``ramdisk_logs_dir`` 目录。
 implementation.
 
 Troubleshooting PXE boot
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-PXE booting most often becomes a problem for bare metal environments with
-several physical networks. If the hardware vendor provides a remote console
-(e.g. iDRAC for DELL), use it to connect to the machine and see what is going
-on. You may need to restart introspection.
+Introspection 大部分问题都是 PXE 启动失败，如果带外网络可以连接，登录 KVM 排查问题。
 
-Another source of information is DHCP and TFTP server logs. Their location
-depends on how the servers were installed and run. For RDO or Fedora use::
+查看 DHCP 和 TFTP 日志::
 
     $ sudo journalctl -u openstack-ironic-inspector-dnsmasq
 
 (use ``openstack-ironic-discoverd-dnsmasq`` for version < 2.0.0).
 
-The last resort is ``tcpdump`` utility. Use something like
+使用 ``tcpdump`` 抓 DHCP 和 TFTP 报文
 ::
 
     $ sudo tcpdump -i any port 67 or port 68 or port 69
 
-to watch both DHCP and TFTP traffic going through your machine. Replace
-``any`` with a specific network interface to check that DHCP and TFTP
-requests really reach it.
+把上面的 any 换成实际的 DHCP 口，并观察服务器是否收到 DHCP 和 TFTP 报文。
 
-If you see node not attempting PXE boot or attempting PXE boot on the wrong
-network, reboot the machine into BIOS settings and make sure that only one
-relevant NIC is allowed to PXE boot.
+如果发现裸机没有从 PXE 启动，或者启动的网口不正确，请配置 BIOS 和交换机。
 
-If you see node attempting PXE boot using the correct NIC but failing, make
-sure that:
+如果 PXE 启动失败，做如下检查:
 
-#. network switches configuration does not prevent PXE boot requests from
-   propagating,
+#. 交换机配置正确，检查 VLAN 信息，DHCP 配置.
 
-#. there is no additional firewall rules preventing access to port 67 on the
-   machine where *ironic-inspector* and its DHCP server are installed.
+#. 检查是否有防火墙规则，拦截了 67 端口.
 
-If you see node receiving DHCP address and then failing to get kernel and/or
-ramdisk or to boot them, make sure that:
+如果裸机要到了 DHCP IP， 但是下载内核镜像失败了，做如下检查:
 
-#. TFTP server is running and accessible (use ``tftp`` utility to verify),
+#. TFTP 正常且可以访问，检查 xinet 服务(或者dnsmasq)，检查 SELinux,
 
-#. no firewall rules prevent access to TFTP port,
+#. 没有防火墙规则拦截 TFTP 报文,
 
-#. DHCP server is correctly set to point to the TFTP server,
+#. DHCP options 中的 TFTP server 地址正确,
 
-#. ``pxelinux.cfg/default`` within TFTP root contains correct reference to the
-   kernel and ramdisk.
+#. ``pxelinux.cfg/default`` 中的 kernel 和 ramdisk 路径正确。
 
 .. note::
-    If using iPXE instead of PXE, check the HTTP server logs and the iPXE
-    configuration instead.
+    如果使用的是 iPXE，检查 HTTP 服务器的日志以及 iPXE 的配置。
 
 Troubleshooting ramdisk run
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-First, check if the ramdisk logs were stored locally as described in the
-`Troubleshooting data processing`_ section. If not, ensure that the ramdisk
-actually booted as described in the `Troubleshooting PXE boot`_ section.
+如果配置了接收日志，先查看日志，检查错误，具体配置参考：
+`Troubleshooting data processing`_ 章节。
 
-Finally, you can try connecting to the IPA ramdisk. If you have any remote
-console access to the machine, you can check the logs as they appear on the
-screen. Otherwise, you can rebuild the IPA image with your SSH key to be able
-to log into it. Use the `dynamic-login`_ or `devuser`_ element for a DIB-based
-build or put an authorized_keys file in ``/usr/share/oem/`` for a CoreOS-based
-one.
+如果 KVM 获取网络可以连接裸机，登录上去，检查服务状态，查看 journalctl 日志。
 
-.. _devuser: http://docs.openstack.org/developer/diskimage-builder/elements/devuser/README.html
+关于怎么动态登录裸机，可以参考文档：
+
 .. _dynamic-login: http://docs.openstack.org/developer/diskimage-builder/elements/dynamic-login/README.html
 
-.. _ubuntu-dns:
-
-Troubleshooting DNS issues on Ubuntu
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Ubuntu uses local DNS caching, so tries localhost for DNS results first
-before calling out to an external DNS server. When DNSmasq is installed and
-configured for use with ironic-inspector, it can cause problems by interfering
-with the local DNS cache. To fix this issue ensure that ``/etc/resolve.conf``
-points to your external DNS servers and not to ``127.0.0.1``.
-
-On Ubuntu 14.04 this can be done by editing your
-``/etc/resolvconf/resolv.conf.d/head`` and adding your nameservers there.
-This will ensure they will come up first when ``/etc/resolv.conf``
-is regenerated.
-
-Running Inspector in a VirtualBox environment
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-By default VirtualBox does not expose a DMI table to the guest. This prevents
-ironic-inspector from being able to discover the properties of the a node. In
-order to run ironic-inspector on a VirtualBox guest the host must be configured
-to expose DMI data inside the guest. To do this run the following command on
-the VirtualBox host::
-
-    VBoxManage setextradata {NodeName} "VBoxInternal/Devices/pcbios/0/Config/DmiExposeMemoryTable" 1
-
-.. note::
-    Replace `{NodeName}` with the name of the guest you wish to expose the DMI
-    table on. This command will need to be run once per host to enable this
-    functionality.

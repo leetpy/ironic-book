@@ -87,210 +87,78 @@ Nova 返回 "No valid host was found" 错误
 
         openstack hypervisor stats show
 
-   correctly shows total amount of resources in your system. You can also
-   check ``openstack hypervisor show <IRONIC NODE>`` to see the status of
-   individual Ironic nodes as reported to Nova.
+   查看具体节点的资源信息，使用
+   ``openstack hypervisor show <IRONIC NODE>``
 
-#. Figure out which Nova Scheduler filter ruled out your nodes. Check the
-   ``nova-scheduler`` logs for lines containing something like::
+#. 查看是哪个 Nova Scheduler filter 没通过, 可以在 ``nova-scheduler`` 日志中搜索::
 
         Filter ComputeCapabilitiesFilter returned 0 hosts
 
-   The name of the filter that removed the last hosts may give some hints on
-   what exactly was not matched. See `Nova filters documentation
-   <http://docs.openstack.org/developer/nova/filter_scheduler.html>`_ for more
-   details.
+   找到哪个 filter 把节点都过滤了，关于 fileter 的作用可以参考:
+   `Nova filters documentation
+   <http://docs.openstack.org/developer/nova/filter_scheduler.html>`_
 
-#. If none of the above helped, check Ironic conductor log carefully to see
-   if there are any conductor-related errors which are the root cause for
-   "No valid host was found". If there are any "Error in deploy of node
-   <IRONIC-NODE-UUID>: [Errno 28] ..." error messages in Ironic conductor
-   log, it means the conductor run into a special error during deployment.
-   So you can check the log carefully to fix or work around and then try
-   again.
+#. 如果上面的检查都没发现什么问题，检查 Ironic conductor 日志，看看有么有
+   相关的错误，导致 "No valid host was found".
 
 Patching the Deploy Ramdisk
 ===========================
 
-When debugging a problem with deployment and/or inspection you may want to
-quickly apply a change to the ramdisk to see if it helps. Of course you can
-inject your code and/or SSH keys during the ramdisk build (depends on how
-exactly you've built your ramdisk). But it's also possible to quickly modify
-an already built ramdisk.
+当调试部署或者 inspection 问题时，为了方便定位，你可能想快速修改 ramdisk 的内容。
+一种是制作 ramdisk 的时候注入脚本，更通用的做法是直接解压。
 
-Create an empty directory and unpack the ramdisk content there::
+创建一个空目录，解压 ramdisk 的内容到该目录::
 
     mkdir unpack
     cd unpack
     gzip -dc /path/to/the/ramdisk | cpio -id
 
-The last command will result in the whole Linux file system tree unpacked in
-the current directory. Now you can modify any files you want. The actual
-location of the files will depend on the way you've built the ramdisk.
-
-After you've done the modifications, pack the whole content of the current
-directory back::
+修改完 ramdisk 文件之后，重新打包 ramdisk::
 
     find . | cpio -H newc -o > /path/to/the/new/ramdisk
 
-.. note:: You don't need to modify the kernel (e.g.
-          ``tinyipa-master.vmlinuz``), only the ramdisk part.
+.. note:: 不要修改 kernel 部分(e.g.
+          ``tinyipa-master.vmlinuz``), 仅修改 ramdisk 的内容.
 
-.. note:: For CoreOS-based ramdisk you also need to unpack and pack back the
-          squashfs archive inside the unpacked ramdisk.
+.. note:: CentOS 系列的 ramdisk 需要解压 ramdisk 里的 squashfs.
 
-API Errors
-==========
-
-The `debug_tracebacks_in_api` config option may be set to return tracebacks
-in the API response for all 4xx and 5xx errors.
 
 Retrieving logs from the deploy ramdisk
 =======================================
 
-When troubleshooting deployments (specially in case of a deploy failure)
-it's important to have access to the deploy ramdisk logs to be able to
-identify the source of the problem. By default, Ironic will retrieve the
-logs from the deploy ramdisk when the deployment fails and save it on the
-local filesystem at ``/var/log/ironic/deploy``.
+当部署失败是，分析 ramdisk 的日志往往很有帮助。当部署失败时，
+Ironic 会默认保存 ramdisk 日志到 ``/var/log/ironic/deploy`` 目录。
 
-To change this behavior, operators can make the following changes to
-``/etc/ironic/ironic.conf`` under the ``[agent]`` group:
+``/etc/ironic/ironic.conf`` 文件的 ``[agent]`` 组:
 
-* ``deploy_logs_collect``:  Whether Ironic should collect the deployment
-  logs on deployment. Valid values for this option are:
+* ``deploy_logs_collect``:  Ironic 是否收集部署阶段的日志，有效配置项:
 
-  * ``on_failure`` (**default**): Retrieve the deployment logs upon a
-    deployment failure.
+  * ``on_failure`` (**default**): 部署失败时收集。
 
-  * ``always``: Always retrieve the deployment logs, even if the
-    deployment succeed.
+  * ``always``: 所有情况都收集。
 
-  * ``never``: Disable retrieving the deployment logs.
+  * ``never``: 不收集。
 
-* ``deploy_logs_storage_backend``: The name of the storage backend where
-  the logs will be stored. Valid values for this option are:
+* ``deploy_logs_storage_backend``: 部署日志存储后端。
 
-  * ``local`` (**default**): Store the logs in the local filesystem.
+  * ``local`` (**default**): 存放在本地文件系统。
 
-  * ``swift``: Store the logs in Swift.
+  * ``swift``: 存放在 Swift.
 
-* ``deploy_logs_local_path``: The path to the directory where the
-  logs should be stored, used when the ``deploy_logs_storage_backend``
-  is configured to ``local``. By default logs will be stored at
-  **/var/log/ironic/deploy**.
-
-* ``deploy_logs_swift_container``: The name of the Swift container to
-  store the logs, used when the deploy_logs_storage_backend is configured to
-  "swift". By default **ironic_deploy_logs_container**.
-
-* ``deploy_logs_swift_days_to_expire``: Number of days before a log object
-  is marked as expired in Swift. If None, the logs will be kept forever
-  or until manually deleted. Used when the deploy_logs_storage_backend is
-  configured to "swift". By default **30** days.
-
-When the logs are collected, Ironic will store a *tar.gz* file containing
-all the logs according to the ``deploy_logs_storage_backend``
-configuration option. All log objects will be named with the following
-pattern::
-
-  <node-uuid>[_<instance-uuid>]_<timestamp yyyy-mm-dd-hh:mm:ss>.tar.gz
-
-.. note::
-   The *instance_uuid* field is not required for deploying a node when
-   Ironic is configured to be used in standalone mode. If present it
-   will be appended to the name.
+* ``deploy_logs_local_path``: 部署日志存放路径，只有配置 ``deploy_logs_storage_backend`` 为 local,
+  才有效。默认存放在 **/var/log/ironic/deploy**.
 
 
-Accessing the log data
-----------------------
+PXE 或 iPXE DHCP 不正确或地址要不到
+===================================
 
-When storing in the local filesystem
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+这可能是由某些交换机上的生成树协议延迟引起的。
+该延迟阻止交换机端口尝试PXE，
+因此数据包不会将其发送到DHCP服务器。
+解决这个问题你应该设置连接到你的裸金属节点的交换机端口作为边缘或PortFast类型端口。 
+以这种方式配置交换机端口一旦建立链接，就转到转发模式。 
 
-When storing the logs in the local filesystem, the log files can
-be found at the path configured in the ``deploy_logs_local_path``
-configuration option. For example, to find the logs from the node
-``5e9258c4-cfda-40b6-86e2-e192f523d668``:
-
-.. code-block:: bash
-
-   $ ls /var/log/ironic/deploy | grep 5e9258c4-cfda-40b6-86e2-e192f523d668
-   5e9258c4-cfda-40b6-86e2-e192f523d668_88595d8a-6725-4471-8cd5-c0f3106b6898_2016-08-08-13:52:12.tar.gz
-   5e9258c4-cfda-40b6-86e2-e192f523d668_db87f2c5-7a9a-48c2-9a76-604287257c1b_2016-08-08-14:07:25.tar.gz
-
-.. note::
-   When saving the logs to the filesystem, operators may want to enable
-   some form of rotation for the logs to avoid disk space problems.
-
-
-When storing in Swift
-~~~~~~~~~~~~~~~~~~~~~
-
-When using Swift, operators can associate the objects in the
-container with the nodes in Ironic and search for the logs for the node
-``5e9258c4-cfda-40b6-86e2-e192f523d668`` using the **prefix** parameter.
-For example:
-
-.. code-block:: bash
-
-  $ swift list ironic_deploy_logs_container -p 5e9258c4-cfda-40b6-86e2-e192f523d668
-  5e9258c4-cfda-40b6-86e2-e192f523d668_88595d8a-6725-4471-8cd5-c0f3106b6898_2016-08-08-13:52:12.tar.gz
-  5e9258c4-cfda-40b6-86e2-e192f523d668_db87f2c5-7a9a-48c2-9a76-604287257c1b_2016-08-08-14:07:25.tar.gz
-
-To download a specific log from Swift, do:
-
-.. code-block:: bash
-
-   $ swift download ironic_deploy_logs_container "5e9258c4-cfda-40b6-86e2-e192f523d668_db87f2c5-7a9a-48c2-9a76-604287257c1b_2016-08-08-14:07:25.tar.gz"
-   5e9258c4-cfda-40b6-86e2-e192f523d668_db87f2c5-7a9a-48c2-9a76-604287257c1b_2016-08-08-14:07:25.tar.gz [auth 0.341s, headers 0.391s, total 0.391s, 0.531 MB/s]
-
-The contents of the log file
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The log is just a ``.tar.gz`` file that can be extracted as:
-
-.. code-block:: bash
-
-   $ tar xvf <file path>
-
-
-The contents of the file may differ slightly depending on the distribution
-that the deploy ramdisk is using:
-
-* For distributions using ``systemd`` there will be a file called
-  **journal** which contains all the system logs collected via the
-  ``journalctl`` command.
-
-* For other distributions, the ramdisk will collect all the contents of
-  the ``/var/log`` directory.
-
-For all distributions, the log file will also contain the output of
-the following commands (if present): ``ps``, ``df``, ``ip addr`` and
-``iptables``.
-
-Here's one example when extracting the content of a log file for a
-distribution that uses ``systemd``:
-
-.. code-block:: bash
-
-   $ tar xvf 5e9258c4-cfda-40b6-86e2-e192f523d668_88595d8a-6725-4471-8cd5-c0f3106b6898_2016-08-08-13:52:12.tar.gz
-   df
-   ps
-   journal
-   ip_addr
-   iptables
-
-DHCP during PXE or iPXE is inconsistent or unreliable
-=====================================================
-
-This can be caused by the spanning tree protocol delay on some switches. The
-delay prevents the switch port moving to forwarding mode during the nodes
-attempts to PXE, so the packets never make it to the DHCP server. To resolve
-this issue you should set the switch port that connects to your baremetal nodes
-as an edge or PortFast type port. Configured in this way the switch port will
-move to forwarding mode as soon as the link is established. An example on how to
-do that for a Cisco Nexus switch is:
+Cisco Nexus交换机配置如下：
 
 .. code-block:: bash
 

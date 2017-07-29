@@ -15,6 +15,7 @@ Contents:
    ironic/introduction.rst
    ironic/install.rst
    ironic/tftp.rst
+   ironic/hashring.rst
    inspector/inspector.rst
    inspector/inspector-lldp.rst
    inspector/inspector-source.rst
@@ -23,6 +24,8 @@ Contents:
    ironic/test.rst
    ironic/vbmc.rst
    ironic/driver.rst
+   troubleshooting.rst
+   inspector-troubleshooting.rst
 
 
 Indices and tables

@@ -62,7 +62,7 @@ virtualbmc 使用
         Chassis Power is on
 
 常用命令
--------
+--------
 
 .. code-block:: shell
 

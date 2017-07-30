@@ -1,10 +1,11 @@
-2.3 inspector 源码分析
+======================
+2.3 Inspector 源码分析
 ======================
 
 ironic-inspector 使用 flask 框架来编写的。flask 是一个轻量级
 的 python web 框架， 详细资料可以查看: http://flask.pocoo.org/
 
-ironic 处理阶段
+Ironic 处理阶段
 ---------------
 
 我们首先通过 cli 来触发 ironic inspector 流程。
@@ -60,7 +61,7 @@ driver.inspect.inspect_hardware 中。
 通过上面的代码，我们可以看到 ironic 发送了 post 请求到 ``/introspection/<uuid>`` 。
 下面流程就到了 inspector 了。
 
-inspector处理阶段
+Inspector处理阶段
 -----------------
 
 ironic-inspector 的 restful api 实现在 ``main.py`` 中，我们首先根据
@@ -122,7 +123,7 @@ IPA 阶段
 ipa-inspection-callback-url指定的url。
 
 
-inspector主机上报阶段
+Inspector主机上报阶段
 ----------------------
 
 先看看inspector怎么处理ipa上报的数据：

@@ -1,9 +1,10 @@
-5.2 virtualbmc使用
+==================
+5.2 Virtualbmc使用
 ==================
 
 通常情况下，我们要使用 IPMI必须使用有带外管理功能的物理机。但是在很多测试环境，我们使用的是虚拟机。virtualbmc是一个可以使用 IPMI命令来控制虚机的openstack 组件。
 
-virtualbmc 安装
+Virtualbmc 安装
 ---------------
 
 .. code-block:: shell
@@ -17,7 +18,7 @@ virtualbmc 安装
     sudo yum install gcc libvirt-devel python-devel
 
 
-virtualbmc 使用
+Virtualbmc 使用
 ---------------
 #. 查看环境中的虚拟机
    

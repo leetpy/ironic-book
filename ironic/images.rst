@@ -1,5 +1,5 @@
 ===============
-4.0 ironic 映像
+4.0 Ironic 映像
 ===============
 
 ironic 整个部署流程中有两组映像，分别是
@@ -8,7 +8,7 @@ deploy 映像和 user 映像，其中 deploy 映像
 用户需要安装的操作系统映像。
 
 
-deploy 映像
+Deploy 映像
 -----------
 
 制作ironic deploy镜像其实就是在普通镜像中添加一个ipa服务，用来裸机和ironic通信。
@@ -71,7 +71,7 @@ dynamic-login 使用的是密文，我们可以使用 ``openssl`` 生产密码�
 
     [pxe]
     pxe_append_params = sshkey=""
-user 映像
+User 映像
 ---------
 
 user 映像又分为 partition 映像和 whole disk 映像，两者的区别是

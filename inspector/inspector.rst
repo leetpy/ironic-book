@@ -1,11 +1,11 @@
-2.0 inspector介绍
+2.0 Inspector介绍
 =================
 
 在我们注册完 ironic-node 之后，我们需要把裸机的硬件信息更新到 node 表里。如果数量比较少，我们可以手动添加，但是如果是大规模部署，显然不适合手动添加。另外还有 port 的创建，裸机网口和交换机的链接关系等，都不适合自动添加。
 
 ironic inspector 主要是帮助我们收集裸机信息的。
 
-inspector 安装
+Inspector 安装
 ---------------
 
 选择一个计算节点，安装 ironic-inspector，inspector 可以和 ironic-conducor 在同一个节点，也可以在不同节点。
@@ -57,13 +57,13 @@ keystone 注册
     openstack service create --name ironic-inspector --description \
     "Ironic inspector baremetal provisioning service" baremetal-introspection
 
-inspector 配置
+Inspector 配置
 ---------------
 
 inspector 提供了两个服务 ``openstack-ironic-inspector`` 
 和 ``openstack-ironic-inspector-dnsmasq``
 
-dnsmasq 配置
+Dnsmasq 配置
 ^^^^^^^^^^^^
 
 .. code-block:: shell
@@ -95,7 +95,7 @@ dnsmasq 配置
     IPADDR=192.168.2.2
     NETMASK=255.255.255.0
 
-tftp 配置
+Tftp 配置
 ^^^^^^^^^
 
 inspector 和 provision 使用的是同一组 deploy 内核镜像
@@ -118,7 +118,7 @@ default 文件，文件内容如下：
 * ``ipa-inspection-callback-url``，这个 IP 填写 tftp 的 IP 地址，裸机需要访问这个 IP;
 * ``ipa-collect-lldp=1`` 是让 IPA 收集 lldp 报文。
 
-ironic 配置
+Ironic 配置
 ^^^^^^^^^^^
 要在 ironic 里使用 inspector，需要先在 ironic 配置文件里使能 inspector，
 配置如下：

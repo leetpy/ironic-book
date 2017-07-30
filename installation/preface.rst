@@ -3,20 +3,23 @@
 
 本书主要介绍了 ironic 的基本原理，以及 ironic 在实际环境中的使用。本书采用的环境如下：
 
-* openstack: ocata 版本
-* os: centos7.3
+* Openstack: Ocata 版本
+* OS: CentOS7.3
 
 内容
 ----
 
 本书主要从以下几个方面介绍 ironic
 
-* ironic
-* ironic-inspector
-* disk-image-builder
-* ironic-python-agent
-* 测试环境
-* cloud-init
+* Ironic 环境搭建；
+* Ironic-api 原理介绍；
+* Ironic-conductor 原理介绍；
+* Ironic-inspector 原理介绍；
+* Ironic-python-agent 原理介绍;
+* Ironic 镜像制作；
+* 测试环境搭建；
+* Cloud-init 使用；
+* 常见问题；
 
 术语
 ----
@@ -45,9 +48,20 @@ openstack 学习
 * 查看 bp: https://launchpad.net/
 * 阅读源码
 
+Ironic 常用链接
+---------------
+
+* IRC LOG: http://eavesdrop.openstack.org/meetings/ironic/2017/
+* WIKI: https://wiki.openstack.org/wiki/Ironic
+* API: https://developer.openstack.org/api-ref/baremetal/index.html
+* 状态机: https://docs.openstack.org/ironic/latest/_images/states.svg
+* 近期Bug: http://ironic-divius.rhcloud.com/
+* 相关项目: https://governance.openstack.org/tc/reference/projects/ironic.html#mission
+* White board: https://etherpad.openstack.org/p/IronicWhiteBoard
+
 
 About
 -----
 
-* author: liekkas
-* email: leetpy2@gmail.com
+* Author: liekkas
+* Email: leetpy2@gmail.com

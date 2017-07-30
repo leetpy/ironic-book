@@ -1,3 +1,4 @@
+====================
 1.1 安装 ironic 环境
 ====================
 
@@ -64,4 +65,3 @@ packstack 默认是不安装 ironic 的，需要做如下修改：
 .. code-block:: shell
 
     packstack --answer-file=filename
-

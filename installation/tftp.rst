@@ -58,5 +58,4 @@ centos 默认开启了 selinux， selinux 会拦截 tftp 报文，
 
 .. code-block:: shell
 
-    setsebool -P tftp_anon_write 1
     setsebool -P tftp_home_dir 1

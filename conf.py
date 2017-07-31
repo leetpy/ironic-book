@@ -118,7 +118,7 @@ html_theme = 'sphinx_rtd_theme'
 html_theme_options = {
     'collapse_navigation': False,
     'display_version': False,
-    # 'navigation_depth': 3,
+    'navigation_depth': 2,
 }
 
 # Add any paths that contain custom themes here, relative to this directory.

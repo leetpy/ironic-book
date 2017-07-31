@@ -41,7 +41,6 @@
 有几个文件需要修改一下，
 参考： https://www.redhat.com/archives/rdo-list/2017-March/msg00011.html
 
-.. note::
 
 两个bug的review链接：
 

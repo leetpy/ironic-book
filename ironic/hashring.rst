@@ -1,6 +1,6 @@
-=======================
-Ironic 一致性 Hash 算法
-=======================
+===========================
+3.3 Ironic 一致性 Hash 算法
+===========================
 
 本文并不详细介绍一致性 Hash 算法，这里只介绍Ironic 如何使用一致性 Hash 算法。
 有兴趣的朋友可以自行查阅资料 。
@@ -49,6 +49,11 @@ Example
 conductor1, conductor2, conductor3. 这三个 conductor 都支持 ``pxe_ipmitool`` 驱动。
 
 首先根据 hostname 构造一个 Hash 环，如下图所示。
+然后根据 Ironic node 的 uuid hash 出一个 position, 离这个 position 最近的 conductor
+就是要找的节点。
+
+.. NOTE::
+    如果希望异常是快速恢复，可以通过配置 ``hash_distribution_replicas`` 调度多个 conductor。
 
 
 

@@ -1,6 +1,6 @@
-=============
-Ironic driver
-=============
+=================
+3.2 Ironic driver
+=================
 
 openstack 的请求流程是 ``restful-api -> rpc`` ,在 ironic 每个
 rpc 请求处理中，一般会创建一个 `TaskManager` 的对象，后续的大部分

@@ -11,13 +11,14 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-   installation/preface.rst
-   installation/introduction.rst
-   installation/install.rst
-   installation/configuration.rst
-   installation/tftp.rst
+   install/preface.rst
+   install/introduction.rst
+   install/install.rst
+   install/configuration.rst
+   install/tftp.rst
    ironic/architecture.rst
    ironic/api.rst
+   ironic/conductor-init.rst
    ironic/driver.rst
    ironic/hashring.rst
    inspector/inspector.rst

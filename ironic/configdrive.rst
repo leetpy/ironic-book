@@ -3,7 +3,7 @@
 =====================
 
 Config drive 介绍
------------------
+=================
 
 Config drive 本质上是 base64 编码之后的数据。
 Config drive 只能是 ISO 9600 或者是 VFAT 文件系统，这个跟 nova 的配置有关。
@@ -64,12 +64,12 @@ Openstack  组下有分了 ``2012-08-10``,  ``2013-10-17``, ``2015-10-15`` 和 `
 而 ``user_data`` 是用户自己编写的脚本。
 
 Config drive 信息保存
----------------------
+=====================
 
 Config drive 本身并不区分虚拟机和物理机，但是虚拟机和物理机 Config drive 存储的方式有些差异。
 
 虚拟机
-^^^^^^
+------
 
 对于虚拟机比较简单，在虚拟机所在计算节点生成 disk.config 文件，修改虚机的 xml 文件，
 添加一个 ``disk`` 标签。这样虚机启动时就能看到这个分区了。
@@ -80,7 +80,7 @@ Nova 在生成 config driver 时会加上一个 ``config-2`` 的 label。
 都能通过 ``/dev/disk/by-label/config-2`` 找到它（仅 linux 系统）。
 
 物理机
-^^^^^^
+------
 
 物理机并不存在 xml 文件，没有办法直接挂载。目前的做法是 Nova 把 config drive 数据传给 ironic,
 ironic 在部署的时候把 config drive 写到物理机磁盘的最后。
@@ -92,7 +92,7 @@ ironic 在部署的时候把 config drive 写到物理机磁盘的最后。
 
 
 使用 config drive
------------------
+=================
 
 使用 config drive 需要在命令行指定 ``--config-drive true``
 

@@ -4,7 +4,7 @@
 
 Openstack 早期的项目采用 ``Paste + PasteDeploy + Routes + WebOb`` 架构。
 后来，OpenStack社区的人受不了这么啰嗦的代码了，决定换一个框架，他们最终选中了Pecan。
-Pecan框架相比上一篇文章的啰嗦框架有如下好处：[1]_
+Pecan 框架有如下好处：[1]_
 
 * 不用自己写WSGI application了
 * 请求路由很容易就可以实现了

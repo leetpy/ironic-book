@@ -14,7 +14,7 @@ cloud-init 有四个执行阶段：
 * final:  cloud-final.service
 
 配置
-----
+====
 
 cloud-init 各阶段完成哪些工作可以在 ``/etc/cloud/cloud.cfg`` 中查看
 
@@ -32,7 +32,7 @@ cloud-init 各阶段完成哪些工作可以在 ``/etc/cloud/cloud.cfg`` 中查�
 #. final 阶段
 
 cloud-init 脚本生成
---------------------
+===================
 
 社区提供了 `write-mime-multipart` 工具来生成 cloud-init 脚本。
 使用方法如下：
@@ -79,7 +79,7 @@ cloud-init 脚本生成
         my-cloudconfig.txt
 
 User Data 输入格式
-------------------
+==================
 
 #. Gzip Compressed Content
 
@@ -119,3 +119,59 @@ User Data 输入格式
    每次上电都会执行，没有机制指定只运行一次。
 
 #. Part Handler
+
+测试
+====
+
+如果要测试 cloud-init 脚本，每次通过 ``nova boot`` 来操作有点麻烦。
+这里提供两种便捷的方式：
+
+修改 xml 文件
+-------------
+
+#. 准备好你的 configdrive 文件，这里假设是 disk.cfg;
+#. 虚机 xml 文件中添加一个 disk 标签，内容如下:
+
+   .. code-block:: xml
+
+      <disk type="file" device="cdrom">
+          <driver name="qemu" type="raw" cache="none"/>
+          <source file="/root/disk.cfg"/>
+          <target bus="ide" dev="hdd"/>
+      </disk>
+
+#. 通过 virsh 启动虚机
+
+当我们需要修改 disk.cfg 内容时，进行如下操作：
+
+.. code-block:: console
+
+    $ sudo mount /root/disk.cfg /mnt
+    $ mkdir configdrive
+    $ cp -r /mnt/* configdrive
+    $ genisoimage -o disk.cfg -ldots -allow-lowercase -allow-multidot -l -quiet \
+      -J -r -V 'config-2' configdrive
+
+使用 config-2 分区
+------------------
+
+#. 启动虚机；
+#. 创建一个 64M 的分区;
+#. 把 configdrive 文件 dd 到该分区，eg:
+
+   .. code-block:: console
+
+    $ sudo dd if=/root/disk.cfg of=/dev/sda4
+
+#. 重启系统
+
+
+以上两种方式如果要多次运行，需要在下次运行前把 cloud-init 记录删除:
+
+.. code-block:: console
+
+    $ sudo rm -rf /var/lib/cloud/*
+
+
+
+

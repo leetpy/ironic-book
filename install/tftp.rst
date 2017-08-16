@@ -10,20 +10,23 @@ TFTP 则是用户自己配置 xinet 和 tftp-server 来完成。
 ----
 #. 安装 rpm 包
 
-    .. code-block:: shell
+    .. code-block:: console
     
-        sudo mkdir -p /tftpboot
-        sudo chown -R ironic /tftpboot
+        # 创建目录并修改权限
+        $ sudo mkdir -p /tftpboot/pxelinux.cfg
+        $ sudo chown -R ironic /tftpboot
     
-        sudo yum install tftp-server xinetd syslinux-tftpboot
+        # 安装相关 rpm 包
+        $ sudo yum install tftp-server xinetd syslinux-tftpboot
     
-        sudo cp /usr/lib/PXELINUX/pxelinux.0 /tftpboot
-        sudo cp /boot/extlinux/chain.c32 /tftpboot
+        # 复制 pxe 引导文件到 tftp 目录
+        $ sudo cp /usr/lib/PXELINUX/pxelinux.0 /tftpboot
+        $ sudo cp /boot/extlinux/chain.c32 /tftpboot
 
 
 #. 创建 map-file 文件，内容如下：
 
-    .. code-block:: shell
+    .. code-block:: console
     
         $ cat /tftpboot/map-file
         re ^(/tftpboot/) /tftpboot/\2
@@ -33,10 +36,9 @@ TFTP 则是用户自己配置 xinet 和 tftp-server 来完成。
 
 #. 修改 tftp 配置文件
 
-    .. code-block:: shell
+    .. code-block:: console
     
         $ cat /etc/xinetd.d/tftp 
-    
         {
             socket_type     = dgram
             protocol        = udp
@@ -49,6 +51,7 @@ TFTP 则是用户自己配置 xinet 和 tftp-server 来完成。
             cps         = 100 2
             flags           = IPv4
         }
+
 
 防火墙
 ------

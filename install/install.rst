@@ -37,7 +37,7 @@
 安装 openstack
 ---------------
 
-如果你安装的是ocata版本，这里packstack有电小bug，
+如果你安装的是ocata版本，这里packstack有点小bug，
 有几个文件需要修改一下，
 参考： https://www.redhat.com/archives/rdo-list/2017-March/msg00011.html
 

@@ -44,13 +44,18 @@ chassis子类型所可能的取值如图所示：
 
 SDN 的 lldp 和普通 lldp 报文差异如下表所示：
 
-======= ======== ========== ======= ================
-SWITCH  TLV TYPE TLV NAME   subtype subtype value   
-======= ======== ========== ======= ================
-SDN     1        chassis id 7       Locally assigned
-normal  1        chassis id 4       Mac Address     
-SDN     2        port id    7       Port component  
-normal  2        port id    3       Mac Address     
-normal  2        port id    5       Interface name  
-normal  2        port id    7       Locally assigned 
-======= ======== ========== ======= ================
++---------+----------+-------------+---------+-------------------+
+| SWITCH  | TLV TYPE | TLV NAME    | subtype | subtype value     |
++=========+==========+=============+=========+===================+
+| SDN     |   1      | chassis id  | 7       | Locally assigned  |
++---------+----------+-------------+---------+-------------------+
+| normal  |   1      | chassis id  | 4       | Mac Address       |
++---------+----------+-------------+---------+-------------------+
+| SDN     |   2      | port id     | 2       | Port component    |
++---------+----------+-------------+---------+-------------------+
+| normal  |   2      | port id     | 3       | Mac Address       |
+|         +          +             +---------+-------------------+
+|         |          |             | 5       | Interface name    |
+|         +          +             +---------+-------------------+
+|         |          |             | 7       | Locally assigned  |
++---------+----------+-------------+---------+-------------------+

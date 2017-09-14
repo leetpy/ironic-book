@@ -27,7 +27,8 @@ Contents:
    ipa/ipa.rst
    ipa/ipa-hm.rst
    ironic/images.rst
-   ironic/test.rst
+   test/test.rst
+   test/devstack.rst
    ironic/vbmc.rst
    ironic/images-config.rst
    ironic/configdrive.rst

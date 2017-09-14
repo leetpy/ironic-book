@@ -2,27 +2,35 @@
 6.0 Ironic 映像
 ===============
 
-ironic 整个部署流程中有两组映像，分别是
-deploy 映像和 user 映像，其中 deploy 映像
-用在 inspector 和 部署阶段， user 映像是
-用户需要安装的操作系统映像。
+ironic 整个部署流程中有两组映像，分别是 deploy 映像和 user 映像，
+其中 deploy 映像用在 inspector 和 部署阶段， user 映像是用户需要安装的操作系统映像。
 
 
 Deploy 映像
------------
+===========
 
 制作ironic deploy镜像其实就是在普通镜像中添加一个ipa服务，用来裸机和ironic通信。
 官方推荐制作镜像的工具有两个，分别是CoreOS tools和disk-image-builder
 具体链接如下: https://docs.openstack.org/project-install-guide/baremetal/ocata/deploy-ramdisk.html
 
 coreos 映像
-^^^^^^^^^^^
+-----------
 
 coreos 是一个 docker 镜像， 你可以自己构建，也可以直接下载社区
 构建好的: http://tarballs.openstack.org/ironic-python-agent/coreos/files/
 
-dib 映像
+
+映像密码
 ^^^^^^^^
+
+添加内核启动参数:
+
+.. code-block:: ini
+
+    coreos.autologin
+
+dib 映像
+--------
 
 映像密码
 ^^^^^^^^
@@ -73,7 +81,7 @@ dynamic-login 使用的是密文，我们可以使用 ``openssl`` 生产密码�
     pxe_append_params = sshkey=""
 
 User 映像
----------
+=========
 
 user 映像又分为 partition 映像和 whole disk 映像，两者的区别是
 whole disk 映像包含分区表和 boot。目前 partition 映像已经很少
@@ -81,7 +89,7 @@ whole disk 映像包含分区表和 boot。目前 partition 映像已经很少
 
 
 镜像驱动问题
-^^^^^^^^^^^^
+------------
 
 我们使用虚机制作的镜像安装在物理机上，很可能缺少驱动，而导致用户
 系统起不来。这里我们以 CentOS 为例，说明如何重新制作驱动。

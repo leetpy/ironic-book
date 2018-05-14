@@ -43,7 +43,7 @@ Inspector 安装
 
 .. code-block:: shell
     
-    ironic-inspector-dbsync --config-file /etc/ironic-inspector/inspector.conf    
+    ironic-inspector-dbsync --config-file /etc/ironic-inspector/inspector.conf upgrade
 
 keystone 注册
 ^^^^^^^^^^^^^

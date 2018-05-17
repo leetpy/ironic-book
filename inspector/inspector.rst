@@ -109,15 +109,16 @@ default 文件，文件内容如下：
 
     label introspect
     kernel deploy.vmlinuz
-    append initrd=deploy.initrd ipa-inspection-callback-url=http://192.168.2.2:5050/v1/continue ipa-inspection-collectors=default ipa-collect-lldp=1 systemd.journald.forward_to_console=no
+    append initrd=deploy.initrd ipa-inspection-callback-url=http://192.168.2.2:5050/v1/continue ipa-inspection-collectors=default ipa-collect-lldp=1 systemd.journald.forward_to_console=no selinux=0
 
     ipappend 3
 
 
-在 default 文件中，确认如下两个配置：
+在 default 文件中，确认如下几个配置：
 
 * ``ipa-inspection-callback-url``，这个 IP 填写 tftp 的 IP 地址，裸机需要访问这个 IP;
-* ``ipa-collect-lldp=1`` 是让 IPA 收集 lldp 报文。
+* ``ipa-collect-lldp=1`` 是让 IPA 收集 lldp 报文;
+* ``selinux=0`` 防止某些情况下无法登陆 initramfs;
 
 Ironic 配置
 ^^^^^^^^^^^
